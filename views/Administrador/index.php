@@ -33,15 +33,24 @@ if (isset($_SESSION["username"]) && !empty($_SESSION["username"])) {
             // Obtener el nombre y el cargo del resultado de la consulta
             $row = $result->fetch_assoc();
             $id_usuario = $row['emp_documento'];
+<<<<<<< HEAD
             $usuario = htmlspecialchars($row['emp_nombre'] . ' ' . $row['emp_apellidos'], ENT_QUOTES, 'UTF-8');
             $cargo = htmlspecialchars($row['emp_cargo'], ENT_QUOTES, 'UTF-8');
+=======
+            $usuario = $row['emp_nombre'] . ' ' . $row['emp_apellidos'];
+            $cargo = $row['emp_cargo'];
+>>>>>>> 6a97529394c937736314fa8cc3b14d078e62086a
         }
 
         // Cerrar la conexión a la base de datos
         $stmt->close();
         $db->close();
     } catch (Exception $e) {
+<<<<<<< HEAD
         $usuario = "Error al conectar a la base de datos: " . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8');
+=======
+        $usuario = "Error al conectar a la base de datos: " . $e->getMessage();
+>>>>>>> 6a97529394c937736314fa8cc3b14d078e62086a
         $cargo = "";
     }
 } else {
@@ -51,7 +60,10 @@ if (isset($_SESSION["username"]) && !empty($_SESSION["username"])) {
 }
 ?>
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6a97529394c937736314fa8cc3b14d078e62086a
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -60,6 +72,11 @@ if (isset($_SESSION["username"]) && !empty($_SESSION["username"])) {
     <title>Vista Principal - Administradores</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<<<<<<< HEAD
+=======
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/instascan/1.0.0/instascan.min.js"></script>
+
+>>>>>>> 6a97529394c937736314fa8cc3b14d078e62086a
     <style>
         body, html {
             height: 100%;
@@ -297,14 +314,23 @@ if (isset($_SESSION["username"]) && !empty($_SESSION["username"])) {
         }
 
     </style>
+<<<<<<< HEAD
     <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
     </head>
+=======
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/instascan/1.0.0/instascan.min.js"></script>
+</head>
+>>>>>>> 6a97529394c937736314fa8cc3b14d078e62086a
 <body>
     <div class="header">
         <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
         <div class="header-title">
             <span>Safe Access</span>
+<<<<<<< HEAD
             <h6 class="titulo"><?php echo $usuario; ?></h6>
+=======
+            <h6 class="titulo"><?php echo htmlspecialchars($usuario, ENT_QUOTES, 'UTF-8'); ?></h6>
+>>>>>>> 6a97529394c937736314fa8cc3b14d078e62086a
         </div>
         <div class="header-icon"><i class="fas fa-lock"></i></div>
     </div>
@@ -313,11 +339,16 @@ if (isset($_SESSION["username"]) && !empty($_SESSION["username"])) {
             <a href="#" onclick="loadContent('empleados.php')"><i class="fas fa-user"></i><span>Gestionar Usuarios</span></a>
             <a href="#" onclick="loadContent('ambientes.php')"><i class="fas fa-calendar-alt"></i><span>Areas</span></a>
             <a href="#" onclick="loadContent('Lector.php')"><i class="fas fa-calendar-alt"></i><span>Areas</span></a>
+<<<<<<< HEAD
             <a href="logout.php"><i class="fas fa-sign-out-alt"></i><span>Close</span></a>
+=======
+            <a href="logout.php"><i class="fas fa-sign-out-alt"></i><span>Cerrar sesión</span></a>
+>>>>>>> 6a97529394c937736314fa8cc3b14d078e62086a
         </div>
         <div id="content"></div>
     </div>
     <script>
+<<<<<<< HEAD
 
         function scanQR() {
             const scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
@@ -335,6 +366,8 @@ if (isset($_SESSION["username"]) && !empty($_SESSION["username"])) {
             });
         }
 
+=======
+>>>>>>> 6a97529394c937736314fa8cc3b14d078e62086a
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const header = document.querySelector('.header');
@@ -342,8 +375,33 @@ if (isset($_SESSION["username"]) && !empty($_SESSION["username"])) {
             const headerIcon = document.querySelector('.header-icon');
             sidebar.classList.toggle('collapsed');
             header.classList.toggle('collapsed');
+<<<<<<< HEAD
             headerTitle.classList.toggle('collapsed');
             headerIcon.classList.toggle('collapsed');
+=======
+            headerTitle.classList.toggle('');
+            headerIcon.classList.toggle('');
+        }
+
+        function changeContent(option) {
+            const contentDiv = document.getElementById('content');
+            let content = '';
+            switch(option) {
+                case 'perfil':
+                    content = `<h1>Perfil</h1><p>Contenido del perfil aquí.</p>`;
+                    break;
+                case 'calendario':
+                    content = `<h1>Calendario</h1><p>Contenido del calendario aquí.</p>`;
+                    break;
+                case 'cerrar-sesion':
+                    content = `<h1>Cerrar Sesión</h1><p>Funcionalidad de cerrar sesión aquí.</p>`;
+                    break;
+                default:
+                    content = `<h1>Bienvenido</h1><p>Selecciona una opción del menú.</p>`;
+                    break;
+            }
+            contentDiv.innerHTML = content;
+>>>>>>> 6a97529394c937736314fa8cc3b14d078e62086a
         }
 
         function loadContent(url) {
@@ -368,10 +426,19 @@ if (isset($_SESSION["username"]) && !empty($_SESSION["username"])) {
                 document.body.appendChild(newScript).parentNode.removeChild(newScript);
             });
         }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6a97529394c937736314fa8cc3b14d078e62086a
     </script>
 
     <footer>
         &copy; 2024 Safe Access. Todos los derechos reservados.
     </footer>
 </body>
+<<<<<<< HEAD
 </html>
+=======
+</html>
+
+>>>>>>> 6a97529394c937736314fa8cc3b14d078e62086a

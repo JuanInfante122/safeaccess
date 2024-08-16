@@ -19,8 +19,11 @@
             padding: 10px 20px;
             display: flex;
             align-items: center;
+<<<<<<< HEAD
             flex-wrap: wrap;
             box-sizing: border-box;
+=======
+>>>>>>> 6a97529394c937736314fa8cc3b14d078e62086a
         }
 
         .cabeza img {
@@ -33,6 +36,7 @@
             font-size: 1.2em;
         }
 
+<<<<<<< HEAD
         .areas, .button-container {
             padding: 20px;
             display: none; /* Ocultamos por defecto */
@@ -160,10 +164,19 @@
                 padding: 8px 16px;
                 font-size: 0.9em;
             }
+=======
+        .areas, .escaneo {
+            padding: 20px;
+        }
+
+        .areas {
+            display: block;
+>>>>>>> 6a97529394c937736314fa8cc3b14d078e62086a
         }
 
         .escaneo {
             display: none;
+<<<<<<< HEAD
             text-align: center;
         }
 
@@ -206,6 +219,46 @@
             .escaneo video {
                 max-width: 100%;
             }
+=======
+        }
+
+        .escan {
+            background-color: #138d75;
+            padding: 10px;
+            color: white;
+        }
+
+        #preview {
+            display: none;
+            width: 100%;
+        }
+
+        .background-animation {
+            position: fixed;
+            top: 500px;
+            left: 50px;
+            width: 80%;
+            height: 50%;
+            animation: scanAnimation 4s linear infinite;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        @keyframes scanAnimation {
+            0% { background-position: -100% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        .back-button {
+            background-color: #f4f4f4;
+            padding: 10px;
+            cursor: pointer;
+            text-align: center;
+            border-radius: 5px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+>>>>>>> 6a97529394c937736314fa8cc3b14d078e62086a
         }
     </style>
 </head>
@@ -252,21 +305,35 @@
         <button onclick="seleccionarArea()">Seleccionar</button>
     </div>
 
+<<<<<<< HEAD
     <div class="button-container" id="button-container">
         <button class="back-button" onclick="mostrarAreas()">Volver a Seleccionar Área</button>
         <!-- El botón para escanear con cámara ha sido eliminado -->
         <div id="fecha-hora"></div>
     </div>
 
+=======
+>>>>>>> 6a97529394c937736314fa8cc3b14d078e62086a
     <div class="escaneo" id="escaneo">
         <h1 class="escan">Escaneando</h1>
         <video id="preview"></video>
         <div class="background-animation"></div>
+<<<<<<< HEAD
+=======
+        <button onclick="scanQR()">Escanear con cámara</button>
+        <button class="back-button" onclick="mostrarAreas()">Volver a Seleccionar Área</button>
+        <div id="employeeInfo" style="display:none;">
+            <h2>Información del Empleado</h2>
+            <p><strong>Nombre:</strong> <span id="employeeName"></span></p>
+            <p><strong>Apellidos:</strong> <span id="employeeLastname"></span></p>
+        </div>
+>>>>>>> 6a97529394c937736314fa8cc3b14d078e62086a
         <form id="imageForm" action="" method="post" enctype="multipart/form-data" style="display:none;">
             <input type="file" accept="image/*" name="archivo" id="fileInput">
             <button type="submit" name="submit">Leer QR desde imagen</button>
         </form>
         <canvas id="canvas" style="display:none;"></canvas>
+<<<<<<< HEAD
     </div>
 
     <!-- Popup de información del empleado -->
@@ -275,6 +342,9 @@
         <p><strong>Nombre:</strong> <span id="employeeName"></span></p>
         <p><strong>Apellidos:</strong> <span id="employeeLastname"></span></p>
         <button onclick="closePopup()">Cerrar</button>
+=======
+        <div id="fecha-hora"></div>
+>>>>>>> 6a97529394c937736314fa8cc3b14d078e62086a
     </div>
 
     <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
@@ -288,7 +358,10 @@
             if (areaId) {
                 document.getElementById('areas').style.display = 'none';
                 document.getElementById('escaneo').style.display = 'block';
+<<<<<<< HEAD
                 scanQR(); // Inicia el escaneo automáticamente
+=======
+>>>>>>> 6a97529394c937736314fa8cc3b14d078e62086a
             } else {
                 alert('Por favor, selecciona un área.');
             }
@@ -313,10 +386,13 @@
 
             scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
             scanner.addListener('scan', function (content) {
+<<<<<<< HEAD
                 // Reproducir sonido de bip
                 const beep = new Audio('beep.mp3'); // Asegúrate de tener un archivo beep.mp3 en la raíz
                 beep.play();
 
+=======
+>>>>>>> 6a97529394c937736314fa8cc3b14d078e62086a
                 // Realizar una solicitud al servidor para validar el acceso del empleado al área
                 fetch('validate_acces.php', {
                     method: 'POST',
@@ -327,6 +403,7 @@
                 })
                 .then(response => response.json())
                 .then(data => {
+<<<<<<< HEAD
                     // Obtener el popup y el sonido
                     const popup = document.getElementById('employeePopup');
                     const employeeName = document.getElementById('employeeName');
@@ -334,6 +411,11 @@
 
                     if (data.accessGranted) {
                         // Si se concede el acceso, muestra la información del empleado
+=======
+                    if (data.accessGranted) {
+                        // Si se concede el acceso
+                        // Si se concede el acceso, obtiene y muestra la información del empleado
+>>>>>>> 6a97529394c937736314fa8cc3b14d078e62086a
                         fetch('get_employee_info.php', {
                             method: 'POST',
                             headers: {
@@ -343,6 +425,7 @@
                         })
                         .then(response => response.json())
                         .then(employeeData => {
+<<<<<<< HEAD
                             employeeName.textContent = employeeData.nombre;
                             employeeLastname.textContent = employeeData.apellidos;
                             popup.classList.add('success');
@@ -364,6 +447,24 @@
                 })
                 .catch(error => {
                     console.error('Error al procesar el acceso:', error);
+=======
+                            // Muestra la información del empleado
+                            document.getElementById('employeeName').textContent = employeeData.nombre;
+                            document.getElementById('employeeLastname').textContent = employeeData.apellidos;
+                            document.getElementById('employeeInfo').style.display = 'block';
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Error al obtener la información del empleado.');
+                        });
+                        alert('Acceso concedido.');
+                    } else {
+                        alert('Acceso denegado.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+>>>>>>> 6a97529394c937736314fa8cc3b14d078e62086a
                     alert('Error al procesar el acceso.');
                 });
             });
@@ -386,12 +487,15 @@
             });
         }
 
+<<<<<<< HEAD
         function closePopup() {
             const popup = document.getElementById('employeePopup');
             popup.style.display = 'none';
             popup.classList.remove('success', 'error');
         }
 
+=======
+>>>>>>> 6a97529394c937736314fa8cc3b14d078e62086a
         function obtenerFechaHora() {
             let fechaHora = new Date();
             let fecha = fechaHora.toLocaleDateString();
