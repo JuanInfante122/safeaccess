@@ -313,7 +313,7 @@ if (isset($_SESSION["username"]) && !empty($_SESSION["username"])) {
             <a href="#" onclick="loadContent('empleados.php')"><i class="fas fa-user"></i><span>Gestionar Usuarios</span></a>
             <a href="#" onclick="loadContent('ambientes.php')"><i class="fas fa-calendar-alt"></i><span>Areas</span></a>
             <a href="#" onclick="loadContent('Lector.php')"><i class="fas fa-calendar-alt"></i><span>Areas</span></a>
-            <a href="logout.php"><i class="fas fa-sign-out-alt"></i><span>Cerrar sesión</span></a>
+            <a href="logout.php"><i class="fas fa-sign-out-alt"></i><span>Close</span></a>
         </div>
         <div id="content"></div>
     </div>
