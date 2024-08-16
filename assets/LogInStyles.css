@@ -1,0 +1,193 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #fff, #f1f1f1);
+    color: #333;
+    overflow-x: hidden;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100% - 40px);
+    width: 100%;
+    padding: 15px;
+}
+
+.login-box {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    max-width: 900px;
+    background: #fff;
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    overflow: hidden;
+    position: relative; /* Para posicionar el ícono de candado */
+}
+
+
+.left-box, .right-box {
+    padding: 40px;
+    flex: 1;
+}
+
+.left-box {
+    background: linear-gradient(135deg, #e6e6e6, #f1f1f1);
+    text-align: center;
+    border-right: 1px solid #ddd;
+}
+
+.left-box h1 {
+    margin-bottom: 20px;
+    font-size: 32px;
+    color: #333;
+}
+
+.left-box p {
+    font-size: 16px;
+    color: #666;
+}
+
+.right-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #fff;
+    text-align: center;
+}
+
+.right-box h2 {
+    margin-bottom: 30px;
+    font-size: 24px;
+    color: #333;
+}
+
+.user-box {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.user-box input {
+    width: 100%;
+    padding: 10px 0;
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 30px;
+    border: none;
+    border-bottom: 2px solid #ddd;
+    outline: none;
+    background: transparent;
+    transition: border-color 0.5s;
+}
+
+.user-box label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 10px 0;
+    font-size: 16px;
+    color: #666;
+    pointer-events: none;
+    transition: 0.5s;
+}
+
+.user-box input:focus ~ label,
+.user-box input:valid ~ label {
+    top: -20px;
+    left: 0;
+    color: #333;
+    font-size: 12px;
+}
+
+.user-box input:focus {
+    border-color: #333;
+}
+
+.btn-login {
+    position: relative;
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background: #333;
+    text-transform: uppercase;
+    text-decoration: none;
+    overflow: hidden;
+    margin-top: 20px;
+    letter-spacing: 4px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.5s, color 0.5s;
+}
+
+.btn-login:hover {
+    background: #555;
+    color: #fff;
+}
+
+.forgot-password {
+    display: block;
+    margin-top: 20px;
+    color: #666;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s ease;
+}
+
+.forgot-password:hover {
+    color: #333;
+}
+
+footer {
+    text-align: center;
+    padding: 10px;
+    font-size: 14px;
+    background: #333;
+    color: #fff;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+}
+
+@media (max-width: 800px) {
+    .login-box {
+        flex-direction: column;
+        max-width: 400px;
+    }
+
+    .left-box, .right-box {
+        padding: 20px;
+    }
+
+    .right-box h2 {
+        font-size: 22px;
+    }
+
+    .user-box input {
+        font-size: 14px;
+    }
+
+    .user-box label {
+        font-size: 14px;
+    }
+
+    .btn-login {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+
+    .forgot-password {
+        font-size: 12px;
+    }
+
+}

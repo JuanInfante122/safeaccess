@@ -1,0 +1,56 @@
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        form {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        select {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+
+        #downloadBtn {
+            background-color: #666;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+            display: inline-block;
+            text-decoration: none; /* Remove underlining for the anchor */
+        }
+
+        #downloadBtn:hover {
+            background-color: #444;
+        }
+
+        #pdfPreview {
+            margin-top: 20px;
+            padding: 5px;
+            border-radius: 10px;
+            overflow-x: scroll; /* Add horizontal scrolling for small screens */
+        }
+
+        #pdfEmbed {
+            width: 100%; /* Make the PDF preview responsive */
+            height: 600px;
+        }
