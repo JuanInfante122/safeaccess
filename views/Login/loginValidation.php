@@ -19,35 +19,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Conexión fallida: " . $conn->connect_error);
     }
 
-    // Consulta para verificar las credenciales
-    $sql = "SELECT * FROM tbl_empleado WHERE emp_documento = ? AND emp_contrasena = ?";
+    // Consulta para obtener los datos del usuario
+    $sql = "SELECT * FROM tbl_empleado WHERE emp_documento = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ss", $username, $password);
+    $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
     
     if ($result->num_rows == 1) {
         // Obtener la fila de resultado como un array asociativo
         $row = $result->fetch_assoc();
-        // Verificar el cargo del empleado
-        if ($row['emp_cargo'] == 1) {
-            // Si el cargo es 1, el empleado es usuario, redireccionar a la vista de empleados
-            $_SESSION["username"] = $username;
-            header("Location: ../Empleados/index.php");
-            exit;
-        } elseif ($row['emp_cargo'] == 2) {
-            // Si el cargo es 2, el empleado es administrador, redireccionar a la vista de administradores
-            $_SESSION["username"] = $username;
-            header("Location: ../Administrador/index.php");
-            exit;
+        
+        // Verificar la contraseña usando password_verify
+        if (password_verify($password, $row['emp_contrasena'])) {
+            // Contraseña correcta
+            // Verificar el cargo del empleado
+            if ($row['emp_cargo'] == 1) {
+                // Si el cargo es 1, el empleado es usuario, redireccionar a la vista de empleados
+                $_SESSION["username"] = $username;
+                header("Location: ../Empleados/index.php");
+                exit;
+            } elseif ($row['emp_cargo'] == 2) {
+                // Si el cargo es 2, el empleado es administrador, redireccionar a la vista de administradores
+                $_SESSION["username"] = $username;
+                header("Location: ../Administrador/index.php");
+                exit;
+            } else {
+                // Cargo no reconocido
+                header("Location: index.php?error=cargo");
+                exit;
+            }
         } else {
-            // Cargo no reconocido
-            header("Location: index.php?error=cargo");
+            // Contraseña incorrecta
+            header("Location: index.php?error=1");
             exit;
         }
     } else {
-        // Usuario o contraseña incorrectos
-        header("Location: index.php?error=1");
+        // Usuario no encontrado
+        header("Location: index.php?error=2");
         exit;
     }
 
@@ -56,4 +65,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $conn->close();
 }
 ?>
-

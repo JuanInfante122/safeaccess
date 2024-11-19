@@ -60,264 +60,190 @@ if (isset($_SESSION["username"]) && !empty($_SESSION["username"])) {
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/instascan/1.0.0/instascan.min.js"></script>
+    <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            display: flex;
-            flex-direction: column;
-            background: linear-gradient(135deg, #fff, #f1f1f1);
-            color: #333;
-            overflow-x: hidden;
-        }
-        .main-container {
-            display: flex;
-            height: 100%;
-            width: 100%;
-        }
+    /* General Styles */
+    body, html {
+        height: 100%;
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+        background-color: #f5f5f5;
+        color: #333;
+        overflow-x: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .main-container {
+        display: flex;
+        height: 100%;
+        width: 100%;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+        width: 250px;
+        background-color: #333;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        transition: width 0.3s ease;
+    }
+    .sidebar.collapsed {
+        width: 80px;
+        padding: 20px 5px;
+        align-items: center;
+    }
+    .sidebar h2 {
+        margin-bottom: 30px;
+        font-size: 20px;
+        text-align: center;
+        color: #fff;
+        transition: opacity 0.3s;
+    }
+    .sidebar.collapsed h2 {
+        opacity: 0;
+    }
+    .sidebar a {
+        color: #ddd;
+        text-decoration: none;
+        padding: 12px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        transition: background 0.3s;
+    }
+    .sidebar a:hover {
+        background: #444;
+    }
+    .sidebar i {
+        margin-right: 10px;
+        font-size: 18px;
+    }
+    .sidebar.collapsed i {
+        margin-right: 0;
+    }
+    .sidebar.collapsed span {
+        display: none;
+    }
+
+    /* Header Styles */
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 20px;
+        background-color: #444;
+        color: #fff;
+        width: calc(100% - 250px);
+        position: fixed;
+        top: 0;
+        right: 0;
+        height: 60px;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        transition: width 0.3s ease;
+    }
+    .header.collapsed {
+        width: calc(100% - 80px);
+    }
+    .header-title {
+        font-size: 18px;
+        font-weight: 500;
+        flex-grow: 1;
+        text-align: center;
+    }
+    .toggle-btn {
+        background: #555;
+        color: #fff;
+        border: none;
+        padding: 8px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background 0.3s;
+    }
+    .toggle-btn:hover {
+        background: #666;
+    }
+
+    /* Content Styles */
+    .content {
+        flex: 1;
+        padding: 30px;
+        margin-top: 60px;
+        background: #fff;
+        overflow-y: auto;
+    }
+    #content {
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    /* Footer Styles */
+    footer {
+        text-align: center;
+        padding: 10px;
+        font-size: 14px;
+        background: #333;
+        color: #fff;
+        width: 100%;
+        position: relative;
+        bottom: 0;
+        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 800px) {
         .sidebar {
-            width: 250px;
-            background: linear-gradient(135deg, #e6e6e6, #f1f1f1);
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-            transition: width 0.3s, padding 0.3s;
-            overflow: hidden;
-        }
-        .sidebar.collapsed {
             width: 80px;
-            align-items: center;
-            padding: 20px 10px;
-        }
-        .sidebar h2 {
-            margin-bottom: 40px;
-            font-size: 24px;
-            text-align: center;
-            transition: opacity 0.3s;
-        }
-        .sidebar.collapsed h2 {
-            opacity: 0;
-        }
-        .sidebar a {
-            color: #333;
-            text-decoration: none;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            transition: background 0.3s, padding 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            width: 100%;
-        }
-        .sidebar.collapsed a {
-            justify-content: center;
-            padding: 10px 0;
-        }
-        .sidebar a:hover {
-            background: #ddd;
-        }
-        .sidebar i {
-            margin-right: 10px;
-            font-size: 10px;
-            transition: margin-right 0.3s, font-size 0.3s;
-        }
-        .sidebar.collapsed i {
-            margin-right: 0;
-            font-size: 24px;
-        }
-        .sidebar span {
-            transition: opacity 0.3s;
-        }
-        .sidebar.collapsed span {
-            opacity: 0;
-        }
-        .content {
-            flex: 1;
-            padding: 40px;
-            background: #fff;
+            padding: 20px 5px;
         }
         .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 20px;
-            background: linear-gradient(135deg, #e6e6e6, #f1f1f1);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-            transition: padding 0.3s;
+            width: calc(100% - 80px);
         }
-        .header.collapsed {
-            padding: 10px;
-        }
-        .header-title {
-            height: 20px;
-            margin-left: 30px;
-            display: flex;
-            align-items: center;
-            flex-grow: 1;
-            font-size: 20px;
-            font-weight: 600;
-            text-align: center;
-            transition: opacity 0.3s, visibility 0.3s;
-        }
-        .header-title span {
-            margin-right: 105px; /* Ajusta el margen según sea necesario */
-        }
-        .header-title.collapsed {
-            opacity: 0;
-            visibility: hidden;
-        }
-        .header-icon {
-            font-size: 24px;
-            text-align: center;
-            transition: opacity 0.3s, visibility 0.3s;
-            opacity: 0;
-            visibility: hidden;
-        }
-        .header-icon.collapsed {
-            opacity: 1;
-            visibility: visible;
-        }
-        .toggle-btn {
-            background: #333;
-            color: #fff;
-            border: none;
-            padding: 10px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background 0.3s;
-        }
-        .toggle-btn:hover {
-            background: #555;
-        }
-
-        @media (min-width: 800px) {
-            .sidebar {
-                width: 30%;
-                height: auto;
-                box-shadow: none;
-                padding: 20px 30px;
-                margin-top: 50px;
-            }
-            .sidebar.collapsed {
-                width: 30px;
-                height: auto;
-                align-items: center;
-                padding: 10px;
-                margin-top: 50px;
-            }
-            .sidebar.collapsed h2 {
-                margin-top: 10px;
-                display: none;
-            }
-            .sidebar.collapsed a {
-                justify-content: center;
-                padding: 10px 0;
-            }
-            .sidebar.collapsed span {
-                display: none;
-            }
-            .content {
-                padding: 30px;
-                padding-top: 80px; /* To avoid content being hidden behind the fixed header */
-            }
-            .header {
-                padding: 10px 10px;
-            }
-            .toggle-btn {
-                padding: 8px;
-            }
-        }
-        @media (max-width: 800px) {
-            .sidebar {
-                width: 30%;
-                height: auto;
-                box-shadow: none;
-                padding: 20px 30px;
-                margin-top: 50px;
-            }
-            .sidebar.collapsed {
-                width: 30px;
-                height: auto;
-                align-items: center;
-                padding: 10px;
-                margin-top: 50px;
-            }
-            .sidebar.collapsed h2 {
-                margin-top: 10px;
-                display: none;
-            }
-            .sidebar.collapsed a {
-                justify-content: center;
-                padding: 10px 0;
-            }
-            .sidebar.collapsed span {
-                display: none;
-            }
-            .content {
-                padding: 30px;
-                padding-top: 80px; /* To avoid content being hidden behind the fixed header */
-            }
-            .header {
-                padding: 10px 10px;
-            }
-            .toggle-btn {
-                padding: 8px;
-            }
-        }
-        footer {
-            text-align: center;
-            padding: 10px;
-            font-size: 14px;
-            background: #333;
-            color: #fff;
-            width: 100%;
-            position: absolute;
-            bottom: 0;
-        }
-        #content {
-            flex: 1;
-            align-items: center;
-            text-align: center;
+        .content {
             padding: 20px;
-            margin-top: 50px;
-            background-color: #f9f9f9;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s;
         }
+    }
+</style>
 
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/instascan/1.0.0/instascan.min.js"></script>
 </head>
 <body>
     <div class="header">
         <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
-        <div class="header-title">
-            <span>Safe Access</span>
-            <h6 class="titulo"><?php echo htmlspecialchars($usuario, ENT_QUOTES, 'UTF-8'); ?></h6>
-        </div>
-        <div class="header-icon"><i class="fas fa-lock"></i></div>
+        <div class="header-title">Safe Access - Admin</div>
     </div>
     <div class="main-container">
         <div class="sidebar" id="sidebar">
-            <a href="#" onclick="loadContent('empleados.php')"><i class="fas fa-user"></i><span>Gestionar Usuarios</span></a>
-            <a href="#" onclick="loadContent('ambientes.php')"><i class="fas fa-calendar-alt"></i><span>Areas</span></a>
-            <a href="#" onclick="loadContent('Lector.php')"><i class="fas fa-calendar-alt"></i><span>Areas</span></a>
+            <h2>Safe Access</h2>
+            <a href="#" onclick="loadContent('empleados.php')"><i class="fas fa-users"></i><span>Gestionar Usuarios</span></a>
+            <a href="#" onclick="loadContent('ambientes.php')"><i class="fas fa-building"></i><span>Áreas</span></a>
+            <a href="#" onclick="loadContent('Lector.php')"><i class="fas fa-qrcode"></i><span>Lector QR</span></a>
+            <a href="#" onclick="loadContent('accesos.php')"><i class="fas fa-qrcode"></i><span>Accesos</span></a>
+            <a href="#" onclick="loadContent('areas.php')"><i class="fas fa-qrcode"></i><span>Áreas en tiempo real</span></a>
+            <a href="#" onclick="loadContent('visualizacion_accesos.php')"><i class="fas fa-qrcode"></i><span>Visualización de Accesos</span></a>
             <a href="logout.php"><i class="fas fa-sign-out-alt"></i><span>Cerrar sesión</span></a>
         </div>
-        <div id="content"></div>
+        <div class="content" id="content">
+            <div id="content">
+                <h1>Bienvenido, Administrador</h1>
+                <p>Seleccione una opción del menú para gestionar los recursos.</p>
+            </div>
+        </div>
     </div>
+
+    <footer class="footer">
+        &copy; 2024 Safe Access. Todos los derechos reservados.
+    </footer>
+
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
@@ -372,12 +298,6 @@ if (isset($_SESSION["username"]) && !empty($_SESSION["username"])) {
                 document.body.appendChild(newScript).parentNode.removeChild(newScript);
             });
         }
-
     </script>
-
-    <footer>
-        &copy; 2024 Safe Access. Todos los derechos reservados.
-    </footer>
 </body>
 </html>
-

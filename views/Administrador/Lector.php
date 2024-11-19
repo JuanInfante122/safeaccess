@@ -19,6 +19,8 @@
             padding: 10px 20px;
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
+            box-sizing: border-box;
         }
 
         .cabeza img {
@@ -31,60 +33,184 @@
             font-size: 1.2em;
         }
 
-        .areas, .escaneo {
+        .areas, .button-container {
             padding: 20px;
+            display: none; /* Ocultamos por defecto */
+            box-sizing: border-box;
         }
 
         .areas {
-            display: block;
+            display: block; /* Mostrar por defecto */
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            background-color: #ffffff;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .button-container button {
+            background-color: #138d75;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .button-container button:hover {
+            background-color: #117a65;
+        }
+
+        .button-container #fecha-hora {
+            font-size: 1em;
+            color: #333;
+            margin: 0;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            z-index: 1000;
+            max-width: 90%;
+            width: 300px;
+            text-align: center;
+            transition: border-color 0.3s ease, opacity 0.3s ease;
+        }
+
+        .popup.success {
+            border-color: green;
+        }
+
+        .popup.error {
+            border-color: red;
+        }
+
+
+        .popup h2 {
+            margin: 0 0 10px;
+        }
+
+        .popup p {
+            margin: 5px 0;
+        }
+
+        .popup button {
+            background-color: #138d75;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .popup button:hover {
+            background-color: #117a65;
+        }
+
+        @media (max-width: 768px) {
+            .cabeza {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .cabeza img {
+                margin: 0 auto 10px;
+            }
+
+            .cabeza h1 {
+                font-size: 1.5em;
+            }
+
+            .areas, .button-container {
+                padding: 10px;
+            }
+
+            .button-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .button-container button {
+                margin: 5px 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cabeza h1 {
+                font-size: 1.2em;
+            }
+
+            .button-container {
+                padding: 5px;
+            }
+
+            .button-container button {
+                padding: 8px 16px;
+                font-size: 0.9em;
+            }
         }
 
         .escaneo {
             display: none;
+            text-align: center;
         }
 
-        .escan {
-            background-color: #138d75;
-            padding: 10px;
-            color: white;
-        }
-
-        #preview {
-            display: none;
+        .escaneo video {
             width: 100%;
+            max-width: 600px;
+            height: auto;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         }
 
         .background-animation {
-            position: fixed;
-            top: 500px;
-            left: 50px;
-            width: 80%;
-            height: 50%;
-            animation: scanAnimation 4s linear infinite;
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.1);
+            z-index: -1;
+            animation: backgroundAnimation 10s linear infinite;
         }
 
-        @keyframes scanAnimation {
-            0% { background-position: -100% 50%; }
-            100% { background-position: 200% 50%; }
+        @keyframes backgroundAnimation {
+            0% { background-color: rgba(0, 0, 0, 0.1); }
+            50% { background-color: rgba(0, 0, 0, 0.3); }
+            100% { background-color: rgba(0, 0, 0, 0.1); }
         }
 
-        .back-button {
-            background-color: #f4f4f4;
-            padding: 10px;
-            cursor: pointer;
-            text-align: center;
-            border-radius: 5px;
-            margin-top: 10px;
-            border: 1px solid #ccc;
+        .escan {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .escaneo {
+                padding: 10px;
+            }
+
+            .escaneo video {
+                max-width: 100%;
+            }
         }
     </style>
 </head>
 <body>
     <div class="cabeza">
-        <img src='../assets/Logo-Sena.jpg' alt='logo'>
         <h1>Gestión de Ambientes de Formación</h1>
     </div>
 
@@ -125,23 +251,29 @@
         <button onclick="seleccionarArea()">Seleccionar</button>
     </div>
 
+    <div class="button-container" id="button-container">
+        <button class="back-button" onclick="mostrarAreas()">Volver a Seleccionar Área</button>
+        <!-- El botón para escanear con cámara ha sido eliminado -->
+        <div id="fecha-hora"></div>
+    </div>
+
     <div class="escaneo" id="escaneo">
         <h1 class="escan">Escaneando</h1>
         <video id="preview"></video>
         <div class="background-animation"></div>
-        <button onclick="scanQR()">Escanear con cámara</button>
-        <button class="back-button" onclick="mostrarAreas()">Volver a Seleccionar Área</button>
-        <div id="employeeInfo" style="display:none;">
-            <h2>Información del Empleado</h2>
-            <p><strong>Nombre:</strong> <span id="employeeName"></span></p>
-            <p><strong>Apellidos:</strong> <span id="employeeLastname"></span></p>
-        </div>
         <form id="imageForm" action="" method="post" enctype="multipart/form-data" style="display:none;">
             <input type="file" accept="image/*" name="archivo" id="fileInput">
             <button type="submit" name="submit">Leer QR desde imagen</button>
         </form>
         <canvas id="canvas" style="display:none;"></canvas>
-        <div id="fecha-hora"></div>
+    </div>
+
+    <!-- Popup de información del empleado -->
+    <div id="employeePopup" class="popup">
+        <h2>Información del Empleado</h2>
+        <p><strong>Nombre:</strong> <span id="employeeName"></span></p>
+        <p><strong>Apellidos:</strong> <span id="employeeLastname"></span></p>
+        <button onclick="closePopup()">Cerrar</button>
     </div>
 
     <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
@@ -155,6 +287,7 @@
             if (areaId) {
                 document.getElementById('areas').style.display = 'none';
                 document.getElementById('escaneo').style.display = 'block';
+                scanQR(); // Inicia el escaneo automáticamente
             } else {
                 alert('Por favor, selecciona un área.');
             }
@@ -179,6 +312,10 @@
 
             scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
             scanner.addListener('scan', function (content) {
+                // Reproducir sonido de bip
+                const beep = new Audio('beep.mp3'); // Asegúrate de tener un archivo beep.mp3 en la raíz
+                beep.play();
+
                 // Realizar una solicitud al servidor para validar el acceso del empleado al área
                 fetch('validate_acces.php', {
                     method: 'POST',
@@ -189,9 +326,13 @@
                 })
                 .then(response => response.json())
                 .then(data => {
+                    // Obtener el popup y el sonido
+                    const popup = document.getElementById('employeePopup');
+                    const employeeName = document.getElementById('employeeName');
+                    const employeeLastname = document.getElementById('employeeLastname');
+
                     if (data.accessGranted) {
-                        // Si se concede el acceso
-                        // Si se concede el acceso, obtiene y muestra la información del empleado
+                        // Si se concede el acceso, muestra la información del empleado
                         fetch('get_employee_info.php', {
                             method: 'POST',
                             headers: {
@@ -201,22 +342,27 @@
                         })
                         .then(response => response.json())
                         .then(employeeData => {
-                            // Muestra la información del empleado
-                            document.getElementById('employeeName').textContent = employeeData.nombre;
-                            document.getElementById('employeeLastname').textContent = employeeData.apellidos;
-                            document.getElementById('employeeInfo').style.display = 'block';
+                            employeeName.textContent = employeeData.nombre;
+                            employeeLastname.textContent = employeeData.apellidos;
+                            popup.classList.add('success');
+                            popup.style.display = 'block';
                         })
                         .catch(error => {
-                            console.error('Error:', error);
-                            alert('Error al obtener la información del empleado.');
+                            console.error('Error al obtener la información del empleado:', error);
+                            popup.classList.add('error');
+                            popup.style.display = 'block';
+                            document.getElementById('employeeName').textContent = 'Error';
+                            document.getElementById('employeeLastname').textContent = 'Error';
                         });
-                        alert('Acceso concedido.');
                     } else {
-                        alert('Acceso denegado.');
+                        popup.classList.add('error');
+                        popup.style.display = 'block';
+                        employeeName.textContent = 'Acceso Denegado';
+                        employeeLastname.textContent = '';
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.error('Error al procesar el acceso:', error);
                     alert('Error al procesar el acceso.');
                 });
             });
@@ -239,6 +385,12 @@
             });
         }
 
+        function closePopup() {
+            const popup = document.getElementById('employeePopup');
+            popup.style.display = 'none';
+            popup.classList.remove('success', 'error');
+        }
+
         function obtenerFechaHora() {
             let fechaHora = new Date();
             let fecha = fechaHora.toLocaleDateString();
@@ -251,3 +403,4 @@
     </script>
 </body>
 </html>
+

@@ -64,66 +64,111 @@ $conexion->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil de Usuario</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Accesos del Empleado</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        /* General Styles */
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
         }
-
-        h1 {
-            text-align: center;
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
             color: #333;
+            padding: 20px 0;
         }
 
-        .profile-container {
-            width: 60%;
-            margin: 20px auto;
+        /* Main Container */
+        .access-container {
+            background: #fff;
+            width: 100%;
+            max-width: 600px;
             padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-
-        .profile-container h2 {
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
             text-align: center;
-            color: #444;
-            margin-bottom: 20px;
+            border: 2px solid #333;
         }
 
-        .access-record {
+        /* Header */
+        .access-header {
+            background: #333;
+            color: #fff;
             padding: 10px;
-            border-bottom: 1px solid #ddd;
+            border-radius: 12px 12px 0 0;
+            font-size: 18px;
+            font-weight: 600;
+            text-transform: uppercase;
         }
 
-        .access-record:last-child {
-            border-bottom: none;
+        /* Access Record */
+        .access-record {
+            background: #f9f9f9;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: left;
         }
 
         .access-record p {
             font-size: 16px;
             color: #555;
-            margin: 5px 0;
+            margin: 8px 0;
         }
 
         .access-record p strong {
             color: #333;
+            font-weight: 500;
+        }
+
+        .access-status {
+            font-weight: 600;
+            color: #28a745;
+        }
+        .access-status.inactive {
+            color: #dc3545;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 400px) {
+            .access-container {
+                width: 90%;
+                padding: 15px;
+            }
+            .access-header {
+                font-size: 16px;
+            }
+            .access-record p {
+                font-size: 14px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="profile-container">
-        <h2>Accesos del Empleado</h2>
-        <?php foreach ($accesos as $acceso): ?>
-        <div class="access-record">
-            <p><strong>Fecha de creación:</strong> <?php echo htmlspecialchars($acceso['acceso_fecha'], ENT_QUOTES, 'UTF-8'); ?></p>
-            <p><strong>Estado:</strong> <?php echo $acceso['acceso_estado'] == 1 ? 'activo' : 'inactivo'; ?></p>
-            <p><strong>Nombre Area:</strong> <?php echo htmlspecialchars($acceso['area_nombre'], ENT_QUOTES, 'UTF-8'); ?></p>
-        </div>
-        <?php endforeach; ?>
+    <div class="access-container">
+        <div class="access-header">Accesos del Empleado</div>
+        <?php if (count($accesos) > 0): ?>
+            <?php foreach ($accesos as $acceso): ?>
+                <div class="access-record">
+                    <p><strong>Fecha de creación:</strong> <?php echo htmlspecialchars($acceso['acceso_fecha'], ENT_QUOTES, 'UTF-8'); ?></p>
+                    <p><strong>Estado:</strong> 
+                        <span class="access-status <?php echo $acceso['acceso_estado'] == 1 ? '' : 'inactive'; ?>">
+                            <?php echo $acceso['acceso_estado'] == 1 ? 'Activo' : 'Inactivo'; ?>
+                        </span>
+                    </p>
+                    <p><strong>Área:</strong> <?php echo htmlspecialchars($acceso['area_nombre'], ENT_QUOTES, 'UTF-8'); ?></p>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p>No se encontraron accesos para el empleado.</p>
+        <?php endif; ?>
     </div>
 </body>
 </html>

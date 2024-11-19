@@ -49,54 +49,123 @@ $conexion->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil de Usuario</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Perfil de Usuario - Carnet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        /* General Styles */
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
         }
-
-        h1 {
-            text-align: center;
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             color: #333;
+            margin: 0;
         }
 
-        .profile-container {
-            width: 50%;
-            margin: 20px auto;
+        /* Badge Container */
+        .badge-container {
+            background: #fff;
+            width: 320px;
             padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-
-        .profile-container h2 {
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
             text-align: center;
-            color: #444;
-            margin-bottom: 20px;
+            border: 2px solid #333;
+            position: relative;
         }
 
-        .profile-container p {
+        /* Header */
+        .badge-header {
+            background: #333;
+            color: #fff;
+            padding: 10px;
+            border-radius: 12px 12px 0 0;
             font-size: 18px;
-            color: #555;
-            line-height: 1.6;
+            font-weight: 600;
+            text-transform: uppercase;
         }
 
-        .profile-container p strong {
+        /* Profile Image Placeholder */
+        .profile-image {
+            width: 100px;
+            height: 100px;
+            background: #ddd;
+            border-radius: 50%;
+            margin: 15px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #666;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Profile Details */
+        .profile-detail {
+            font-size: 15px;
+            color: #555;
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .profile-detail strong {
             color: #333;
+            font-weight: 500;
+        }
+
+        /* Footer */
+        .badge-footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #888;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 400px) {
+            .badge-container {
+                width: 90%;
+                padding: 15px;
+            }
+            .badge-header {
+                font-size: 16px;
+            }
+            .profile-image {
+                width: 80px;
+                height: 80px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="profile-container">
-        <h2>Información del Empleado</h2>
-        <p><strong>Documento:</strong> <?php echo htmlspecialchars($row['emp_documento'], ENT_QUOTES, 'UTF-8'); ?></p>
-        <p><strong>Nombre:</strong> <?php echo htmlspecialchars($row['emp_nombre'], ENT_QUOTES, 'UTF-8'); ?></p>
-        <p><strong>Apellidos:</strong> <?php echo htmlspecialchars($row['emp_apellidos'], ENT_QUOTES, 'UTF-8'); ?></p>
-        <p><strong>Cargo:</strong> <?php echo htmlspecialchars($row['emp_cargo'], ENT_QUOTES, 'UTF-8'); ?></p>
+    <div class="badge-container">
+        <div class="badge-header">Empleado - Safe Access</div>
+        <div class="profile-image">Foto</div>
+        <div class="profile-detail"><strong>Documento:</strong> <span><?php echo htmlspecialchars($row['emp_documento'], ENT_QUOTES, 'UTF-8'); ?></span></div>
+        <div class="profile-detail"><strong>Nombre:</strong> <span><?php echo htmlspecialchars($row['emp_nombre'], ENT_QUOTES, 'UTF-8'); ?></span></div>
+        <div class="profile-detail"><strong>Apellidos:</strong> <span><?php echo htmlspecialchars($row['emp_apellidos'], ENT_QUOTES, 'UTF-8'); ?></span></div>
+        <div class="profile-detail"><strong>Cargo:</strong> 
+            <span>
+                <?php
+                    // Display 'Administrador' for cargo = 2, 'Empleado' for cargo = 1
+                    echo $row['emp_cargo'] == 2 ? 'Administrador' : 'Empleado';
+                ?>
+            </span>
+        </div>
+        <div class="badge-footer">&copy; 2024 Safe Access. Todos los derechos reservados.</div>
     </div>
 </body>
 </html>
