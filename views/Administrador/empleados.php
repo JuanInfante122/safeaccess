@@ -11,7 +11,17 @@ if (!isset($_SESSION["username"]) || empty($_SESSION["username"])) {
 
 $username = $_SESSION["username"];
 
+// Conexión a la base de datos
+try {
+    $db = Database::connect();
+} catch (Exception $e) {
+    echo json_encode(["status" => "error", "message" => "Error en la conexión a la base de datos"]);
+    exit;
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    header("Content-Type: application/json");
+
     if (isset($_POST["create_user"])) {
         // Código para crear un nuevo empleado
         $documento = intval($_POST["documento"]);
@@ -19,9 +29,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $apellidos = $_POST["apellidos"];
         $correo = $_POST["correo"];
         $estado = isset($_POST["estado"]) ? 1 : 0;
-        $cargo = $_POST["cargo"];
+        $cargo = intval($_POST["cargo"]);
+        $contrasena = $_POST["contrasena"];
+
+        if (empty($contrasena)) {
+            echo json_encode(["status" => "error", "message" => "La contraseña es obligatoria"]);
+            exit;
+        }
+
+        // Hashear la contraseña
+        $hashed_password = password_hash($contrasena, PASSWORD_BCRYPT);
 
         try {
+            // Verificar si el documento ya existe
             $checkQuery = "SELECT COUNT(*) AS count FROM tbl_empleado WHERE emp_documento = ?";
             $stmt = $db->prepare($checkQuery);
             $stmt->bind_param("i", $documento);
@@ -33,67 +53,84 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 exit;
             }
 
-            $db = Database::connect();
-            $query = "INSERT INTO tbl_empleado (emp_documento, emp_nombre, emp_apellidos, empleado_correo, emp_estado, emp_cargo) 
-                      VALUES (?, ?, ?, ?, ?, ?)";
+            // Insertar el nuevo empleado
+            $query = "INSERT INTO tbl_empleado (emp_documento, emp_nombre, emp_apellidos, emp_contrasena, empleado_correo, emp_estado, emp_cargo) 
+                      VALUES (?, ?, ?, ?, ?, ?, ?)";
             $stmt = $db->prepare($query);
-            $stmt->bind_param("isssis", $documento, $nombre, $apellidos, $correo, $estado, $cargo);
+            $stmt->bind_param("issssis", $documento, $nombre, $apellidos, $hashed_password, $correo, $estado, $cargo);
             $stmt->execute();
 
-            $stmt->close();
-            $db->close();
-
-            echo json_encode(["status" => "success"]);
-            exit;
-        } catch (Exception $e) {
-            echo json_encode(["status" => "error", "message" => $e->getMessage()]);
-            exit;
-        }
-    } elseif (isset($_POST["update_employee"])) {
-        // Código para modificar el empleado
-        $documento = intval($_POST["documento"]);
-        $nombre = $_POST["nombre"];
-        $apellidos = $_POST["apellidos"];
-        $correo = $_POST["correo"];
-        $estado = isset($_POST["estado"]) ? 1 : 0; // Verificar si el estado está marcado o no
-        $cargo = $_POST["cargo"];
-
-        try {
-            // Conectar a la base de datos
-            $db = Database::connect();
-
-            // Preparar la consulta SQL para actualizar los datos del empleado
-            $query = "UPDATE tbl_empleado SET emp_nombre = ?, emp_apellidos = ?, empleado_correo = ?, emp_estado = ?, emp_cargo = ? WHERE emp_documento = ?";
-            $stmt = $db->prepare($query);
-            $stmt->bind_param("sssiis", $nombre, $apellidos, $correo, $estado, $cargo, $documento);
-            $stmt->execute();
-
-            // Cerrar la conexión a la base de datos
-            $stmt->close();
-            $db->close();
-
-            echo json_encode(["status" => "success"]);
+            echo json_encode(["status" => "success", "message" => "Usuario creado con éxito"]);
             exit;
         } catch (Exception $e) {
             echo json_encode(["status" => "error", "message" => $e->getMessage()]);
             exit;
         }
     }
+
+    elseif (isset($_POST["update_employee"])) {
+        // Código para actualizar empleado
+        $documento = intval($_POST["documento"]);
+        $nombre = $_POST["nombre"];
+        $apellidos = $_POST["apellidos"];
+        $correo = $_POST["correo"];
+        $estado = isset($_POST["estado"]) ? 1 : 0;
+        $cargo = intval($_POST["cargo"]);
+        $contrasena = $_POST["contrasena"];
+
+        try {
+            if (!empty($contrasena)) {
+                // Si se proporciona una nueva contraseña, actualizarla
+                $hashed_password = password_hash($contrasena, PASSWORD_BCRYPT);
+                $query = "UPDATE tbl_empleado SET emp_nombre = ?, emp_apellidos = ?, empleado_correo = ?, emp_estado = ?, emp_cargo = ?, emp_contrasena = ? WHERE emp_documento = ?";
+                $stmt = $db->prepare($query);
+                $stmt->bind_param("sssiisi", $nombre, $apellidos, $correo, $estado, $cargo, $hashed_password, $documento);
+            } else {
+                // Si no, actualizar sin cambiar la contraseña
+                $query = "UPDATE tbl_empleado SET emp_nombre = ?, emp_apellidos = ?, empleado_correo = ?, emp_estado = ?, emp_cargo = ? WHERE emp_documento = ?";
+                $stmt = $db->prepare($query);
+                $stmt->bind_param("sssiis", $nombre, $apellidos, $correo, $estado, $cargo, $documento);
+            }
+
+            $stmt->execute();
+
+            echo json_encode(["status" => "success", "message" => "Empleado actualizado con éxito"]);
+            exit;
+        } catch (Exception $e) {
+            echo json_encode(["status" => "error", "message" => $e->getMessage()]);
+            exit;
+        }
+    }
+    elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
+        header("Content-Type: application/json");
+    
+        if (isset($_POST["toggle_employee"])) {
+            // Código para activar/inactivar empleado
+            $documento = intval($_POST["documento"]);
+            $estado = intval($_POST["estado"]);
+    
+            try {
+                $query = "UPDATE tbl_empleado SET emp_estado = ? WHERE emp_documento = ?";
+                $stmt = $db->prepare($query);
+                $stmt->bind_param("ii", $estado, $documento);
+                $stmt->execute();
+    
+                echo json_encode(["status" => "success", "message" => "Estado del empleado actualizado"]);
+                exit;
+            } catch (Exception $e) {
+                echo json_encode(["status" => "error", "message" => $e->getMessage()]);
+                exit;
+            }
+        }
+    }
 }
 
 try {
-    // Conectar a la base de datos
-    $db = Database::connect();
-
-    // Preparar la consulta SQL para obtener los empleados
+    // Obtener la lista de empleados
     $query = "SELECT emp_documento, emp_nombre, emp_apellidos, empleado_correo, emp_estado, emp_cargo FROM tbl_empleado";
     $stmt = $db->prepare($query);
     $stmt->execute();
     $result = $stmt->get_result();
-
-    // Cerrar la conexión a la base de datos
-    $stmt->close();
-    $db->close();
 } catch (Exception $e) {
     $error_message = "Error al conectar a la base de datos: " . $e->getMessage();
 }
@@ -317,42 +354,41 @@ try {
     </style>
     <script>
         function toggleForm() {
-            var formContainer = document.getElementById('form-container');
-            var employeeTable = document.getElementById('employee-table');
-            formContainer.style.display = formContainer.style.display === 'none' ? 'block' : 'none';
-            employeeTable.style.display = formContainer.style.display === 'none' ? 'table' : 'none';
-        }
+        const formContainer = document.getElementById('form-container');
+        const employeeTable = document.getElementById('employee-table');
+        formContainer.style.display = formContainer.style.display === 'none' ? 'block' : 'none';
+        employeeTable.style.display = formContainer.style.display === 'none' ? 'table' : 'none';
+    }
 
-        function createUser(event) {
-            event.preventDefault();
-            const form = document.getElementById('create-user-form');
-            const formData = new FormData(form);
+    function createUser(event) {
+        event.preventDefault();
+        const form = document.getElementById('create-user-form');
+        const formData = new FormData(form);
 
-            fetch('empleados.php', { method: 'POST', body: formData })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        alert('Usuario creado con éxito');
-                        location.reload();
-                    } else {
-                        alert('Error: ' + data.message);
-                    }
-                })
-                .catch(console.error);
-        }
-
-
-        function toggleEmployee(documento, estado) {
-            var newState = estado === '1' ? '0' : '1';
-            var formData = new FormData();
-            formData.append('toggle_employee', '1');
-            formData.append('documento', documento);
-            formData.append('estado', newState);
-
-            fetch('empleados.php', {
-                method: 'POST',
-                body: formData
+        fetch('empleados.php', { method: 'POST', body: formData })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Usuario creado con éxito');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
             })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function toggleEmployee(documento, estado) {
+        const newState = estado === '1' ? '0' : '1';
+        const formData = new FormData();
+        formData.append('toggle_employee', '1');
+        formData.append('documento', documento);
+        formData.append('estado', newState);
+
+        fetch('empleados.php', {
+            method: 'POST',
+            body: formData
+        })
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
@@ -362,41 +398,35 @@ try {
                     alert('Error: ' + data.message);
                 }
             })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        }
+            .catch(error => console.error('Error:', error));
+    }
 
-        function loadEmployeeData(documento, nombre, apellidos, correo, estado, cargo) {
-            var title = document.querySelector('h1');
-            var employeeTable = document.getElementById('employee-table');
-            title.style.display = 'none';
-            employeeTable.style.display = 'none';
+    function loadEmployeeData(documento, nombre, apellidos, correo, estado, cargo) {
+        const formContainer = document.getElementById('update-form-container');
+        const employeeTable = document.getElementById('employee-table');
+        formContainer.style.display = 'block';
+        employeeTable.style.display = 'none';
 
-            var formContainer = document.getElementById('update-form-container');
-            formContainer.style.display = 'block';
+        const form = document.getElementById('update-user-form');
+        form.elements['documento'].value = documento;
+        form.elements['nombre'].value = nombre;
+        form.elements['apellidos'].value = apellidos;
+        form.elements['correo'].value = correo;
+        form.elements['update-estado'].checked = estado === '1';
+        form.elements['cargo'].value = cargo;
+    }
 
-            var form  = document.getElementById('update-user-form');
-            form.elements['documento'].value = documento;
-            form.elements['nombre'].value = nombre;
-            form.elements['apellidos'].value = apellidos;
-            form.elements['correo'].value = correo;
-            form.elements['update-estado'].checked = estado === '1';
-            form.elements['cargo'].value = cargo;
-        }
+    function updateEmployee(event) {
+        event.preventDefault();
+        const confirmation = confirm("¿Estás seguro de que deseas modificar este usuario?");
+        if (confirmation) {
+            const form = document.getElementById('update-user-form');
+            const formData = new FormData(form);
 
-        function updateEmployee(event) {
-            event.preventDefault();
-            var confirmation = confirm("¿Estás seguro de que deseas modificar este usuario?");
-            
-            if (confirmation) {
-                var form = document.getElementById('update-user-form');
-                var formData = new FormData(form);
-
-                fetch('empleados.php', {
-                    method: 'POST',
-                    body: formData
-                })
+            fetch('empleados.php', {
+                method: 'POST',
+                body: formData
+            })
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
@@ -406,19 +436,18 @@ try {
                         alert('Error: ' + data.message);
                     }
                 })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-            }
+                .catch(error => console.error('Error:', error));
         }
+    }
+
     </script>
 </head>
 <body>
     <div class="container">
         <h1>Lista de Empleados</h1>
         <button class="btn-create-user" onclick="toggleForm()">Crear Usuario</button>
-        
-        <div id="form-container" class="form-container">
+
+        <div id="form-container" class="form-container" style="display: none;">
             <h2>Crear Nuevo Usuario</h2>
             <form id="create-user-form" onsubmit="createUser(event)">
                 <input type="hidden" name="create_user" value="1">
@@ -429,7 +458,9 @@ try {
                 <label for="apellidos">Apellidos:</label>
                 <input type="text" id="apellidos" name="apellidos" required>
                 <label for="correo">Correo:</label>
-                <input type="text" id="correo" name="correo" required>
+                <input type="email" id="correo" name="correo" required>
+                <label for="contrasena">Contraseña:</label>
+                <input type="password" id="contrasena" name="contrasena" required>
                 <label for="estado">Estado:</label>
                 <input type="checkbox" id="estado" name="estado">
                 <label for="cargo">Cargo:</label>
@@ -441,7 +472,7 @@ try {
             </form>
         </div>
 
-        <div id="update-form-container" class="form-container">
+        <div id="update-form-container" class="form-container" style="display: none;">
             <h2>Modificar Usuario</h2>
             <form id="update-user-form" onsubmit="updateEmployee(event)">
                 <input type="hidden" name="update_employee" value="1">
@@ -452,7 +483,9 @@ try {
                 <label for="apellidos">Apellidos:</label>
                 <input type="text" id="update-apellidos" name="apellidos" required>
                 <label for="correo">Correo:</label>
-                <input type="text" id="update-correo" name="correo" required>
+                <input type="email" id="update-correo" name="correo" required>
+                <label for="contrasena">Nueva Contraseña (opcional):</label>
+                <input type="password" id="update-contrasena" name="contrasena">
                 <label for="estado">Estado:</label>
                 <input type="checkbox" id="update-estado" name="estado">
                 <label for="cargo">Cargo:</label>
@@ -465,6 +498,17 @@ try {
         </div>
 
         <table id="employee-table" class="employee-table">
+            <thead>
+                <tr>
+                    <th>Documento</th>
+                    <th>Nombre</th>
+                    <th>Apellidos</th>
+                    <th>Correo</th>
+                    <th>Estado</th>
+                    <th>Cargo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
             <tbody>
                 <?php while ($row = $result->fetch_assoc()): ?>
                     <tr>
@@ -478,7 +522,9 @@ try {
                             <button class="btn-toggle" onclick="toggleEmployee('<?php echo $row['emp_documento']; ?>', '<?php echo $row['emp_estado']; ?>')">
                                 <?php echo $row['emp_estado'] == 1 ? 'Inactivar' : 'Activar'; ?>
                             </button>
-                            <button class="btn-modify" onclick="loadEmployeeData('<?php echo $row['emp_documento']; ?>', '<?php echo $row['emp_nombre']; ?>', '<?php echo $row['emp_apellidos']; ?>', '<?php echo $row['empleado_correo']; ?>', '<?php echo $row['emp_estado']; ?>', '<?php echo $row['emp_cargo']; ?>')">Modificar</button>
+                            <button class="btn-modify" onclick="loadEmployeeData('<?php echo $row['emp_documento']; ?>', '<?php echo $row['emp_nombre']; ?>', '<?php echo $row['emp_apellidos']; ?>', '<?php echo $row['empleado_correo']; ?>', '<?php echo $row['emp_estado']; ?>', '<?php echo $row['emp_cargo']; ?>')">
+                                Modificar
+                            </button>
                         </td>
                     </tr>
                 <?php endwhile; ?>

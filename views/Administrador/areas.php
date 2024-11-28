@@ -166,6 +166,13 @@ if (isset($_GET['area_id'])) {
         </div>
     </div>
 
+    <a href="http://localhost/dashboard/safeaccess/views/Administrador/areas.php" target="_blank">
+        <button class="btn btn-primary">Ver en el Dashboard</button>
+    </a>
+    <a href="http://localhost/dashboard/safeaccess/views/Administrador/index.php" target="_blank">
+        <button class="btn btn-primary">Volver</button>
+    </a>
+
     <!-- Bootstrap JS and Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

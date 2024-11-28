@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $db = Database::connect();
 
             // Preparar la consulta SQL para insertar el nuevo ambiente
-            $query = "INSERT INTO tbl_area (area_nombre, area_aforo_max, area_tipo, area_estado) VALUES (?, ?, ?, 1)";
+            $query = "INSERT INTO tbl_area (area_nombre, area_aforo_max, area_tipo, area_estado, area_ubicacion) VALUES (?, ?, ?,1,1)";
             $stmt = $db->prepare($query);
             $stmt->bind_param("sis", $nombre, $aforo_max, $tipo);
             $stmt->execute();
